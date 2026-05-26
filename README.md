@@ -1,8 +1,6 @@
 # RackBuilder-Plugin-for-Librenms
 This is a small plugin for LibreNMS to add Datacenter Rack. It's completely made with AI.
 
-# RackBuilder Plugin for LibreNMS
-
 ## Overview
 A rack diagram/builder plugin for LibreNMS that allows you to create visual representations of physical server racks. Each server/node can be linked to an existing LibreNMS-monitored device, showing live status as colored bulbs.
 
