@@ -366,7 +366,7 @@ Extend `getServers()` to also return unassigned devices. Create an "Auto-add" bu
 
 
 
-
+```
 Maintenance checklist after every librenms update (daily.sh / upgrade):
 
 # 1. provider still registered?
@@ -381,3 +381,4 @@ su - librenms -c "cd /opt/librenms && grep -c RackBuilder bootstrap/cache/routes
 #   -> must be > 0; if 0, run: php artisan route:clear  (and re-check the page reloads OK)
 
 systemctl restart php-fpm
+```
