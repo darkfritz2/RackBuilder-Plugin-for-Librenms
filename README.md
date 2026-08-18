@@ -362,3 +362,22 @@ Add `sortablejs` or native drag/drop API to `renderGrid()`, then call `updateSer
 
 ### Add device auto-import
 Extend `getServers()` to also return unassigned devices. Create an "Auto-add" button in the UI that places unracked devices.
+
+
+
+
+
+Maintenance checklist after every librenms update (daily.sh / upgrade):
+
+# 1. provider still registered?
+grep -c "RackBuilderProvider" /opt/librenms/bootstrap/providers.php
+#   -> if 0, re-add this line: \App\Plugins\RackBuilder\Providers\RackBuilderProvider::class,
+
+# 2. rebuild route cache so plugin routes are baked in
+su - librenms -c "cd /opt/librenms && php artisan route:cache"
+
+# 3. routes present in cache?
+su - librenms -c "cd /opt/librenms && grep -c RackBuilder bootstrap/cache/routes-v7.php"
+#   -> must be > 0; if 0, run: php artisan route:clear  (and re-check the page reloads OK)
+
+systemctl restart php-fpm
