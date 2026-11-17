@@ -1,0 +1,21 @@
+{
+    "name": "local/librenms-rackbuilder",
+    "description": "Registers the RackBuilder plugin's API routes in LibreNMS (installed with: lnms plugin:add)",
+    "type": "library",
+    "version": "1.0.0",
+    "require": {
+        "php": ">=8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "LocalPlugins\\RackBuilder\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LocalPlugins\\RackBuilder\\RoutesServiceProvider"
+            ]
+        }
+    }
+}
