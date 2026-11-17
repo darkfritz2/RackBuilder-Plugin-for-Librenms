@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Schema;
  * Loaded by LocalPlugins\RackBuilder\RoutesServiceProvider, so `lnms migrate` (which daily.sh
  * runs on every update) picks it up automatically. Each table is only created if it doesn't
  * exist yet, so installs that already have the tables are left untouched.
+ *
+ * The schema is identical to the original RackBuilder migration of the same name, which older
+ * installs placed in LibreNMS's database/migrations folder. Because the file name matches,
+ * Laravel treats it as already run on those installs.
  */
 return new class extends Migration
 {
@@ -17,10 +21,10 @@ return new class extends Migration
     {
         if (! Schema::hasTable('rack_builder_racks')) {
             Schema::create('rack_builder_racks', function (Blueprint $table) {
-                $table->id();
+                $table->increments('id');
                 $table->string('name');
-                $table->unsignedSmallInteger('size')->default(42);
-                $table->string('layout', 16)->default('standard');
+                $table->tinyInteger('size')->default(42);
+                $table->string('layout', 20)->default('standard');
                 $table->text('description')->nullable();
                 $table->timestamps();
             });
@@ -28,34 +32,36 @@ return new class extends Migration
 
         if (! Schema::hasTable('rack_builder_servers')) {
             Schema::create('rack_builder_servers', function (Blueprint $table) {
-                $table->id();
-                $table->foreignId('rack_id')->constrained('rack_builder_racks')->cascadeOnDelete();
-                $table->string('panel', 16)->default('main');
+                $table->increments('id');
+                $table->unsignedInteger('rack_id');
+                $table->string('panel', 20)->default('main');
                 $table->string('name');
-                $table->unsignedTinyInteger('u_height')->default(1);
-                $table->unsignedSmallInteger('u_position');
-                $table->unsignedTinyInteger('num_nodes')->default(1);
+                $table->tinyInteger('u_height');
+                $table->tinyInteger('u_position');
+                $table->tinyInteger('num_nodes')->default(1);
                 $table->text('description')->nullable();
                 $table->string('color', 7)->nullable();
-                $table->string('slot_position', 8)->default('full');
-                $table->string('side', 8)->default('both');
+                $table->string('slot_position', 5)->default('full');
+                $table->string('side', 5)->default('both');
                 $table->timestamps();
 
-                $table->index(['rack_id', 'panel', 'u_position']);
+                $table->foreign('rack_id')->references('id')->on('rack_builder_racks')->onDelete('cascade');
+                $table->index('rack_id');
             });
         }
 
         if (! Schema::hasTable('rack_builder_nodes')) {
             Schema::create('rack_builder_nodes', function (Blueprint $table) {
-                $table->id();
-                $table->foreignId('server_id')->constrained('rack_builder_servers')->cascadeOnDelete();
-                $table->unsignedTinyInteger('node_number');
+                $table->increments('id');
+                $table->unsignedInteger('server_id');
+                $table->tinyInteger('node_number');
                 $table->string('label');
                 $table->unsignedInteger('device_id')->nullable()->index();
                 $table->text('description')->nullable();
                 $table->timestamps();
 
-                $table->unique(['server_id', 'node_number']);
+                $table->foreign('server_id')->references('id')->on('rack_builder_servers')->onDelete('cascade');
+                $table->index('server_id');
             });
         }
     }
